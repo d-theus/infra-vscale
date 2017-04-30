@@ -1,0 +1,16 @@
+#!/usr/bin/env ruby
+
+$LOAD_PATH << File.expand_path('../..', __FILE__)
+$LOAD_PATH << File.expand_path('../../lib', __FILE__)
+
+require 'infra'
+
+Infra::Info.call.each do |key, values|
+  puts key
+  puts(values.map.with_index do |hash, i|
+    hash.map do |k, v|
+      sprintf("%15s: %s", k, v.inspect)
+    end.join("\n\t").prepend("#{key}[#{i}]:\n\t")
+  end)
+end
+
