@@ -14,7 +14,7 @@ $> VSCALE_TOKEN=xyz bundle exec bin/apply state.yml
 
 #### state.yml
 
-```
+```yaml
 ---
 servers:
   - name: 'example.com'
