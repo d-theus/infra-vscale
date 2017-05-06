@@ -14,9 +14,10 @@ module Infra
           @payload.delete("domain_names").each do |sname|
             @payload["domains"] << existing_domains.find { |s| s["name"] == sname } or
               fail "Cannot find existing domain with name '#{sname}'"
+            @payload["domains"].map! { |e| e["id"] }
           end
 
-          Vscale::Api::Client.new(Vscale::Api::TOKEN).add_domains_tag(@payload)
+          Vscale::Api::Client.new(Vscale::Api::TOKEN).add_domains_tags(@payload)
         end
 
         def validate!

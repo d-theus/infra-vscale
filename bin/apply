@@ -8,17 +8,20 @@ require 'colorize'
 
 state_file = ARGV.fetch(0) { fail "State file required" }
 state = Infra::State.load(state_file)
-Infra::Plan.call(state).each do |cmd|
-  color =
-    case cmd.type
-    when /create/
-      :green
-    when /modify/
-      :yellow
-    when /delete/
-      :red
-    end
-  puts cmd.type
+Infra::Plan.call(state).each do |stage|
+  puts "Stage: #{stage.name}"
+  stage.commands.each do |cmd|
+    color =
+      case cmd.type
+      when /create/
+        :green
+      when /update/
+        :yellow
+      when /delete/
+        :red
+      end
+    puts cmd.explain.colorize(color)
   puts cmd.invoke.inspect
-  puts "Done!"
+  end
+  puts
 end

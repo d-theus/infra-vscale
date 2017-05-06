@@ -9,8 +9,8 @@ module Infra
     def initialize(hash)
       hash = hash.with_indifferent_access
 
-      hash[:server_tags] = extract_tags(hash, :server)
-      hash[:domain_tags] = extract_tags(hash, :domain)
+      hash[:server_tags] = extract_server_tags(hash)
+      hash[:domain_tags] = extract_domain_tags(hash)
       hash[:domain_records] = extract_domain_records(hash)
       normalize_ssh_keys(hash)
 
@@ -31,16 +31,38 @@ module Infra
 
     private
 
-    def extract_tags(hash, scope)
-      hash.fetch("#{scope}s", []).reduce({}) do |acc,e|
+    def extract_server_tags(hash)
+      hash.fetch("servers", []).reduce({}) do |acc,e|
         tags =
-          e.delete("tags").map { |t| t["#{scope}_names"] ||= []; t["#{scope}_names"].push e["name"]; t }
+          e.delete("tags").map { |t| t["server_names"] ||= []; t["server_names"].push e["name"]; t }
         tags.each do |t|
           acc[t["name"]] ||= []
-          acc[t["name"]] |= t["#{scope}_names"]
+          acc[t["name"]] |= t["server_names"]
         end
         acc
-      end.map { |tag, names| { "name" => tag, "#{scope}_names" => names.to_set }}
+      end.map { |tag, names| { "name" => tag, "server_names" => names.to_set }}
+    end
+
+    def extract_domain_tags(hash)
+      hash.fetch("domains", []).reduce({}) do |acc,e|
+        tags =
+          e.delete("tags").map do |t|
+          if t.is_a? Hash
+            t
+          else
+            hash.fetch("domain_tags", []).find { |tt| tt["id"] == t }
+          end
+          end.map do |t|
+            t["domain_names"] ||= []
+            t["domain_names"].push e["name"]
+            t
+          end
+        tags.each do |t|
+          acc[t["name"]] ||= []
+          acc[t["name"]] |= t["domain_names"]
+        end
+        acc
+      end.map { |tag, names| { "name" => tag, "domain_names" => names.to_set }}
     end
 
     def extract_domain_records(hash)

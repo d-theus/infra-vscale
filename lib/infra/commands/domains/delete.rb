@@ -4,6 +4,8 @@ module Infra
       class Delete < Base
         def initialize(payload)
           @payload = payload.with_indifferent_access
+          @domain = Vscale::Api::Client.new(Vscale::Api::TOKEN).domains.body
+            .find { |e| e["name"] == @payload["name"] }
           validate!
           super("domain:delete", @payload)
         end
@@ -13,9 +15,11 @@ module Infra
         end
 
         def validate!
-          %w(id name).each do |key|
+          %w(name).each do |key|
             fail ArgumentError, "Missing key: #{key}" unless @payload.key?(key)
           end
+
+          fail "Cannot find domain by name '#{@payload[:name]}'" unless @domain
         end
       end
     end

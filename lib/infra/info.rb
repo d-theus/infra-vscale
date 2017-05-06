@@ -36,6 +36,14 @@ module Infra
         hash["make_from"] = hash.delete("made_from")
         hash.except("created", "public_address", "private_address", "hostname", "deleted", "ctid", "status", "active", "locked")
       end
+
+      @state["domains"].map! do |hash|
+        hash.except("change_date", "create_date", "id", "user_id")
+      end
+
+      @state["domain_records"].map! do |hash|
+        hash.except("id")
+      end
     end
   end
 end

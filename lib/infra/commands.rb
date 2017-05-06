@@ -9,6 +9,8 @@ module Infra
   end
 end
 
+require 'erb'
+
 require 'infra/commands/base'
 require 'infra/commands/servers/create'
 require 'infra/commands/servers/delete'
