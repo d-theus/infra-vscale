@@ -66,11 +66,13 @@ module Infra
     end
 
     def extract_domain_records(hash)
-      hash.fetch(:domains, []).reduce({}) do |acc, dom|
-        acc[dom["name"]] ||= []
-        acc[dom["name"]] |= Array(dom.delete("records")).map { |r| r["name"] = dom["name"]; r }
-        acc
-      end.values.flatten.uniq
+      hash.fetch "domain_records" do
+        hash.fetch(:domains, []).reduce({}) do |acc, dom|
+          acc[dom["name"]] ||= []
+          acc[dom["name"]] |= Array(dom.delete("records")).map { |r| r["name"] = dom["name"]; r }
+          acc
+        end.values.flatten.uniq
+      end
     end
 
     def normalize_ssh_keys(hash)

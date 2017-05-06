@@ -10,15 +10,18 @@ module Infra
     end
 
     def call
+        servers = Vscale::Api::Client.new(Vscale::Api::TOKEN).scalets.body
+        server_tags = Vscale::Api::Client.new(Vscale::Api::TOKEN).scalets_tags.body
+        domains = Vscale::Api::Client.new(Vscale::Api::TOKEN).domains.body
+        domain_tags = Vscale::Api::Client.new(Vscale::Api::TOKEN).domains_tags.body
+        domain_records = domains.flat_map { |d| Vscale::Api::Client.new(Vscale::Api::TOKEN).domain_records(d["id"]).body }
+
       @state = Infra::State.new(
-        "servers" =>
-          Vscale::Api::Client.new(Vscale::Api::TOKEN).scalets.body,
-        "server_tags" =>
-          Vscale::Api::Client.new(Vscale::Api::TOKEN).scalets_tags.body,
-        "domains" =>
-          Vscale::Api::Client.new(Vscale::Api::TOKEN).domains.body,
-        "domain_tags" =>
-          Vscale::Api::Client.new(Vscale::Api::TOKEN).domains_tags.body,
+        "servers" => servers,
+        "server_tags" => server_tags,
+        "domains" => domains,
+        "domain_tags" => domain_tags,
+        "domain_records" => domain_records,
       )
 
       exclude_dynamic_info if @options[:exclude_dynamic_info]
@@ -41,6 +44,7 @@ module Infra
         hash.except("change_date", "create_date", "id", "user_id")
       end
 
+      puts @state["domain_records"].inspect
       @state["domain_records"].map! do |hash|
         hash.except("id")
       end

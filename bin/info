@@ -13,4 +13,3 @@ Infra::Info.call.each do |key, values|
     end.join("\n\t").prepend("#{key}[#{i}]:\n\t")
   end)
 end
-
