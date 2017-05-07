@@ -44,7 +44,6 @@ module Infra
         hash.except("change_date", "create_date", "id", "user_id")
       end
 
-      puts @state["domain_records"].inspect
       @state["domain_records"].map! do |hash|
         hash.except("id")
       end

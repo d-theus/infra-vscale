@@ -28,9 +28,6 @@ module Infra
         commands: infer_commands_for("domain_records")
       )
 
-      puts domain_records_from.inspect
-      puts domain_records_to.inspect
-
       @stages.map(&OpenStruct.method(:new))
     end
 

@@ -14,8 +14,9 @@ module Infra
             .find { |e| e["name"] == @payload.fetch(:name) }
           fail "Cannot find domain by name '#{@payload[:name]}'" unless domain
 
-          @record = Vscale::Api::Client.new(Vscale::Api::TOKEN).domain_records(domain["id"]).body
+          record = Vscale::Api::Client.new(Vscale::Api::TOKEN).domain_records(domain["id"]).body
             .find { |e| [e["name"], e["type"]] == [@payload["name"], @payload["type"]] }
+          fail "Cannot find domain record by name:type '#{@payload[:name]}:#{@payload[:type]}'" unless record
 
           if @payload.values.any? { |e| e =~ /<%=.*%>/ }
             context_class = Struct.new(:servers, :domains) do
@@ -30,7 +31,7 @@ module Infra
               @payload[k] = ERB.new(v).result(context.get_binding) if v =~ /<%=.*%>/
             end
 
-          Vscale::Api::Client.new(Vscale::Api::TOKEN).remove_domain_record(domain["id"], @record["id"])
+          Vscale::Api::Client.new(Vscale::Api::TOKEN).remove_domain_record(domain["id"], record["id"])
           Vscale::Api::Client.new(Vscale::Api::TOKEN).add_domain_record(domain["id"], @payload)
           end
         end
