@@ -11,8 +11,10 @@ module Infra
         def invoke
           domain = 
             Vscale::Api::Client.new(Vscale::Api::TOKEN).domains.body
-            .find { |e| e["name"] == @payload.fetch(:name) }
-          fail "Cannot find domain by name '#{@payload[:name]}'" unless domain
+            .find { |e| e["name"] == @payload.fetch(:domain) }
+          fail "Cannot find domain by name '#{@payload[:domain]}'" unless domain
+          @payload.delete(:domain)
+          domain = domain.with_indifferent_access
 
           if @payload.values.any? { |e| e =~ /<%=.*%>/ }
             context_class = Struct.new(:servers, :domains) do

@@ -6,9 +6,12 @@ module Infra
           @payload = payload.with_indifferent_access
           @domain = 
             Vscale::Api::Client.new(Vscale::Api::TOKEN).domains.body
-            .find { |e| e["name"] == @payload.delete(:name) }
-            .with_indifferent_access
-          @record = Vscale::Api::Client.new(Vscale::Api::TOKEN).domain_records.body
+            .find { |e| e["name"] == @payload.fetch(:domain) }
+            fail "Cannot find domain by name '#{@payload[:domain]}'" unless @domain
+            @payload.delete(:domain)
+          @domain = @domain.with_indifferent_access
+
+          @record = Vscale::Api::Client.new(Vscale::Api::TOKEN).domain_records(@domain[:id]).body
             .find { |e| [e["name"], e["type"]] == [@payload.fetch(:name), @payload.fetch(:type)] }
             .with_indifferent_access
           validate!
@@ -16,7 +19,7 @@ module Infra
         end
 
         def invoke
-          Vscale::Api::Client.new(Vscale::Api::TOKEN).remove_domain_record(@payload)
+          Vscale::Api::Client.new(Vscale::Api::TOKEN).remove_domain_record(@domain[:id], @record[:id])
         end
 
         def validate!

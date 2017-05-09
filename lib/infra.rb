@@ -1,6 +1,6 @@
 require 'config/vscale.rb'
 require 'vscale/api'
-require "active_support/core_ext/hash/indifferent_access"
+require 'active_support/core_ext/hash/indifferent_access'
 require 'set'
 
 module Infra

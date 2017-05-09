@@ -69,7 +69,8 @@ module Infra
       hash.fetch "domain_records" do
         hash.fetch(:domains, []).reduce({}) do |acc, dom|
           acc[dom["name"]] ||= []
-          acc[dom["name"]] |= Array(dom.delete("records")).map { |r| r["name"] = dom["name"]; r }
+          records = dom.delete("records").map { |r| r["domain"] = dom["name"]; r }
+          acc[dom["name"]] |= Array(records)
           acc
         end.values.flatten.uniq
       end

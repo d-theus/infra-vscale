@@ -11,8 +11,9 @@ module Infra
         def invoke
           domain = 
             Vscale::Api::Client.new(Vscale::Api::TOKEN).domains.body
-            .find { |e| e["name"] == @payload.fetch(:name) }
-          fail "Cannot find domain by name '#{@payload[:name]}'" unless domain
+            .find { |e| e["name"] == @payload.fetch(:domain) }
+          fail "Cannot find domain by name '#{@payload[:domain]}'" unless domain
+          domain = domain.with_indifferent_access
 
           record = Vscale::Api::Client.new(Vscale::Api::TOKEN).domain_records(domain["id"]).body
             .find { |e| [e["name"], e["type"]] == [@payload["name"], @payload["type"]] }
