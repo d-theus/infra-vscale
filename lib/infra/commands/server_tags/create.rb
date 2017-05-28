@@ -16,6 +16,7 @@ module Infra
               fail "Cannot find existing scalet with name '#{sname}'"
           end
 
+          puts @payload.inspect
           Vscale::Api::Client.new(Vscale::Api::TOKEN).add_scalet_tag(@payload)
         end
 

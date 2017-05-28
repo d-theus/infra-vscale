@@ -1,3 +1,4 @@
 .rbenv-vars
 state.yml
 state.lock.yml
+.ruby-version

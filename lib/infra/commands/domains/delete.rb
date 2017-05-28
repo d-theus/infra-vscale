@@ -11,7 +11,7 @@ module Infra
         end
 
         def invoke
-          Vscale::Api::Client.new(Vscale::Api::TOKEN).remove_domain(@payload)
+          Vscale::Api::Client.new(Vscale::Api::TOKEN).remove_domain(@domain["id"])
         end
 
         def validate!

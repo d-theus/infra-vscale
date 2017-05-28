@@ -14,7 +14,12 @@ module Infra
         server_tags = Vscale::Api::Client.new(Vscale::Api::TOKEN).scalets_tags.body
         domains = Vscale::Api::Client.new(Vscale::Api::TOKEN).domains.body
         domain_tags = Vscale::Api::Client.new(Vscale::Api::TOKEN).domains_tags.body
-        domain_records = domains.flat_map { |d| Vscale::Api::Client.new(Vscale::Api::TOKEN).domain_records(d["id"]).body }
+        domain_records = domains.flat_map do |d|
+          Vscale::Api::Client.new(Vscale::Api::TOKEN).domain_records(d["id"]).body.map do |rec|
+            rec["domain"] = d["name"]
+            rec
+          end
+        end
 
       @state = Infra::State.new(
         "servers" => servers,
