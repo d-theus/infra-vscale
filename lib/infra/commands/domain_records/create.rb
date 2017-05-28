@@ -29,8 +29,8 @@ module Infra
               @payload[k] = ERB.new(v).result(context.get_binding) if v =~ /<%=.*%>/
             end
 
-          Vscale::Api::Client.new(Vscale::Api::TOKEN).add_domain_record(domain["id"], @payload)
           end
+          Vscale::Api::Client.new(Vscale::Api::TOKEN).add_domain_record(domain.fetch("id"), @payload)
         end
 
         def validate!
