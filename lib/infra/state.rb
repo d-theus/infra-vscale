@@ -12,6 +12,7 @@ module Infra
       hash[:server_tags] = extract_server_tags(hash)
       hash[:domain_tags] = extract_domain_tags(hash)
       hash[:domain_records] = extract_domain_records(hash)
+      hash[:ptr] = extract_ptr(hash)
       normalize_ssh_keys(hash)
 
       @hash = {
@@ -20,6 +21,7 @@ module Infra
         server_tags: hash.fetch(:server_tags, []),
         domain_tags: hash.fetch(:domain_tags, []),
         domain_records: hash.fetch(:domain_records, []),
+        ptr: hash.fetch(:ptr, []),
       }.with_indifferent_access
     end
 
@@ -74,6 +76,10 @@ module Infra
           acc
         end.values.flatten.uniq
       end
+    end
+
+    def extract_ptr(hash)
+      hash.fetch "ptr", []
     end
 
     def normalize_ssh_keys(hash)

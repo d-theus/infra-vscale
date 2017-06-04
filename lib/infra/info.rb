@@ -20,6 +20,7 @@ module Infra
             rec
           end
         end
+        ptr = Vscale::Api::Client.new(Vscale::Api::TOKEN).domains_ptr.body
 
       @state = Infra::State.new(
         "servers" => servers,
@@ -27,6 +28,7 @@ module Infra
         "domains" => domains,
         "domain_tags" => domain_tags,
         "domain_records" => domain_records,
+        "ptr" => ptr
       )
 
       exclude_dynamic_info if @options[:exclude_dynamic_info]

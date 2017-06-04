@@ -27,6 +27,10 @@ module Infra
         name: 'domain_records',
         commands: infer_commands_for("domain_records")
       )
+      @stages.push(
+        name: 'ptr_records',
+        commands: infer_commands_for("ptr")
+      )
 
       @stages.map(&OpenStruct.method(:new))
     end
@@ -51,7 +55,7 @@ module Infra
       end
 
       def entity.keys
-        { servers: [:name], domains: [:name], server_tags: [:name], domain_tags: [:name], domain_records: [:name, :type] }
+        { servers: [:name], domains: [:name], server_tags: [:name], domain_tags: [:name], domain_records: [:name, :type], ptr: [:content] }
           .fetch(self.to_sym)
       end
 
@@ -70,7 +74,7 @@ module Infra
       m + a + d
     end
 
-    %w(servers domains server_tags domain_tags domain_records).each do |pref|
+    %w(servers domains server_tags domain_tags domain_records ptr).each do |pref|
       # TODO: FinderStruct < OpenStruct ??
       define_method "#{pref}_to" do
         records = state_to.fetch(pref, []).map(&OpenStruct.method(:new))
