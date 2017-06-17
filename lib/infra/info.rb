@@ -44,7 +44,7 @@ module Infra
     def exclude_dynamic_info
       @state["servers"].map! do |hash|
         hash["make_from"] = hash.delete("made_from")
-        hash.except("created", "public_address", "private_address", "hostname", "deleted", "ctid", "status", "active", "locked")
+        hash.except("created", "public_address", "private_address", "hostname", "deleted", "ctid", "status", "active", "locked", "tags")
       end
 
       @state["domains"].map! do |hash|

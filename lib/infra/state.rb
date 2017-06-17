@@ -9,7 +9,7 @@ module Infra
     def initialize(hash)
       hash = hash.with_indifferent_access
 
-      hash[:server_tags] = extract_server_tags(hash)
+      hash[:server_tags] ||= extract_server_tags(hash)
       hash[:domain_tags] = extract_domain_tags(hash)
       hash[:domain_records] = extract_domain_records(hash)
       hash[:ptr] = extract_ptr(hash)

@@ -10,7 +10,6 @@ module Infra
         end
 
         def invoke
-          puts @payload.inspect
           Vscale::Api::Client.new(Vscale::Api::TOKEN).new_scalet(@payload)
         end
 
